@@ -2,9 +2,15 @@
 
 Reference the Creating an Entity Relationship Diagram final project guide in the course portal for more information about how to complete this deliverable.
 
+## Implementation status
+
+This is the planned PostgreSQL schema. The initial implementation uses `server/data/events.js` and has no database tables yet. The sample event category and host are text labels.
+
+Milestone 4 will add categories/events tables and a repeatable seed/reset command. The final milestone will add students and the RSVP join table. Clubs are outside the current schema and delivery scope. See the [development plan](development_plan.md).
+
 ## Create the List of Tables
 
-The School.event database consists of four tables:
+The planned School.Event database has four tables:
 
 1. **categories** — Stores event categories such as Academic, Social, Sports, and Career.
 2. **events** — Stores event details, including the title, description, location, date, image URL, and category.

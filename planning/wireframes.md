@@ -2,6 +2,17 @@
 
 Reference the Creating an Entity Relationship Diagram final project guide in the course portal for more information about how to complete this deliverable.
 
+## Implementation status
+
+These images are the Milestone 2 design references. The current app follows their noticeboard style with a read-only homepage and event details page using the basic Express sample API.
+
+- `/` and `/events/:eventId` are implemented.
+- Create and edit forms, category/date controls, and deletion are planned for Milestone 4.
+- RSVP controls are planned for the final milestone.
+- Search appears in the original reference but is deferred beyond the current delivery scope.
+
+Controls for unfinished features are absent from the current app. See the [development plan](development_plan.md) for the route and API scope.
+
 ## List of Pages
 
 The following pages will be included in School.event:
@@ -13,7 +24,7 @@ The following pages will be included in School.event:
 
 ## Wireframe 1: Home Page
 
-The homepage allows students to browse upcoming campus events, search for events, and filter or sort them by category and date.
+The reference shows event browsing, search, category filters, and date sorting. The initial implementation provides browsing; the remaining controls follow the scope above.
 
 ![Home Page Wireframe 1](./Home%20Page1.png)
 
@@ -21,7 +32,7 @@ The homepage allows students to browse upcoming campus events, search for events
 
 ## Wireframe 2: Event Details Page
 
-This page displays information about a selected event, including its description, date, time, and location. Students can RSVP as "Going" or "Interested." Users can also edit or delete events.
+This page displays information about a selected event, including its description, date, time, and location. The reference also shows RSVP, edit, and delete controls. Those actions are planned for later passes.
 
 ![Event Details Page Wireframe](./Event%20page.png)
 
