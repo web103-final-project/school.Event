@@ -2,6 +2,14 @@
 
 This document should be completed and submitted during **Unit 9** of this course. You **must** check off all completed tasks in this document in order to receive credit for your work.
 
+## Planned final sprint scope
+
+Add the students and RSVP join table, persist Going/Interested selections, and extend the database reset for all tables. Complete Render deployment, verify the complete app, record feature GIFs and the final walkthrough, and finish the grading checklist and reflections.
+
+The initial sample-data frontend/API is implemented. The checked baseline items below record that existing behavior. Database relationships, persistent event writes, same-page filtering/RSVP, the selected custom features, and deployed verification remain planned. Final submission tasks stay unchecked until the deployed app is verified.
+
+See the [development plan](../planning/development_plan.md) for issue links, routes, dependencies, and acceptance checks.
+
 ## Checklist
 
 This unit, be sure to complete all tasks listed below. To complete a task, place an `x` between the brackets.
@@ -24,27 +32,27 @@ Complete the checklist below detailing each baseline, custom, and stretch featur
 
 👉🏾👉🏾👉🏾 Check off each completed feature below.
 
-- [ ] The project includes an Express backend app and a React frontend app
+- [x] The project includes an Express backend app and a React frontend app
 - [ ] The project includes these backend-specific features:
   - [ ] At least one of each of the following database relationships in Postgres
     - [ ] one-to-many
     - [ ] many-to-many with a join table
   - [ ] A well-designed RESTful API that:
     - [ ] supports all four main request types for a single entity (ex. tasks in a to-do list app): GET, POST, PATCH, and DELETE
-      - [ ] the user can **view** items, such as tasks
+      - [x] the user can **view** items, such as tasks
       - [ ] the user can **create** a new item, such as a task
       - [ ] the user can **update** an existing item by changing some or all of its values, such as changing the title of task
       - [ ] the user can **delete** an existing item, such as a task
     - [ ] Routes follow proper naming conventions
   - [ ] The web app includes the ability to reset the database to its default state
 - [ ] The project includes these frontend-specific features:
-  - [ ] At least one redirection, where users are able to navigate to a new page with a new URL within the app
+  - [x] At least one redirection, where users are able to navigate to a new page with a new URL within the app
   - [ ] At least one interaction that the user can initiate and complete on the same page without navigating to a new page
-  - [ ] Dynamic frontend routes created with React Router
-  - [ ] Hierarchically designed React components
-    - [ ] Components broken down into categories, including Page and Component types
-    - [ ] Corresponding container components and presenter components as appropriate
-- [ ] The project includes dynamic routes for both frontend and backend apps
+  - [x] Dynamic frontend routes created with React Router
+  - [x] Hierarchically designed React components
+    - [x] Components broken down into categories, including Page and Component types
+    - [x] Corresponding container components and presenter components as appropriate
+- [x] The project includes dynamic routes for both frontend and backend apps
 - [ ] The project is deployed on Render with all pages and features that are visible to the user are working as intended
 
 ### Custom Features
@@ -80,7 +88,7 @@ Complete the checklist below detailing each baseline, custom, and stretch featur
 
 ## Final Demo GIF
 
-🔗 [Here's a GIF walkthrough of the final project](👉🏾👉🏾👉🏾 your link here)
+Not recorded yet. The final walkthrough must demonstrate the completed deployed app. The initial [Milestone 3 GIF](../docs/demos/browse-events.gif) only demonstrates sample-data browsing and read-only details.
 
 ## Reflection
 
