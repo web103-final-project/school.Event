@@ -21,9 +21,7 @@ The idea came from Homecoming Week, when many events relied on paper posters for
 
 ## Project status
 
-The initial React frontend and basic Express backend are implemented. The home page loads six sample events from the API, and each event opens a dedicated details page. The design follows the noticeboard wireframes from Milestone 2.
-
-This pass uses read-only sample data in `server/data/events.js`. PostgreSQL persistence, event creation/editing/deletion, filtering, and RSVP remain for later passes. The app is not deployed yet.
+The React noticeboard and Express API are backed by PostgreSQL. Students can browse, filter, and sort events, open an event, and create, edit, or delete posts. Server validation rejects incomplete or inconsistent submissions. RSVP and the deployed walkthrough remain for the final milestone.
 
 Work is tracked on the [WEB103-Final-Project board](https://github.com/orgs/web103-final-project/projects/1). The board is private, and the grading account **codepathreview** has Reader access.
 
@@ -35,13 +33,30 @@ The [Milestone 3 Progress Report](milestones/progress_report_3.md) records the G
 
   ![Browse sample campus events](docs/demos/browse-events.gif)
 
-- [ ] **Create events.** Post an event with a title, description, date, location, and category. Tracked in [issue #1](https://github.com/web103-final-project/school.Event/issues/1).
-- [ ] **Edit events.** Update an existing event's date, time, location, or description. Tracked in [issue #2](https://github.com/web103-final-project/school.Event/issues/2).
-- [ ] **Delete events.** Remove canceled events or posts that are no longer relevant. Tracked in [issue #10](https://github.com/web103-final-project/school.Event/issues/10).
+- [x] **✅ Create events.** Post an event with a title, description, date, location, and category. Tracked in [issue #1](https://github.com/web103-final-project/school.Event/issues/1).
+
+  ![Post an event and open its page](docs/demos/create-event.gif)
+
+- [x] **✅ Edit events.** Update an existing event's date, time, location, or description. Tracked in [issue #2](https://github.com/web103-final-project/school.Event/issues/2).
+
+  ![Edit an event and save the new location](docs/demos/edit-event.gif)
+
+- [x] **✅ Delete events.** Remove canceled events or posts that are no longer relevant. Tracked in [issue #10](https://github.com/web103-final-project/school.Event/issues/10).
+
+  ![Remove an event and return to the board](docs/demos/delete-event.gif)
+
 - [ ] **RSVP to events.** Select "Going" or "Interested" without leaving the event page. Tracked in [issue #5](https://github.com/web103-final-project/school.Event/issues/5).
-- [ ] **Filter events by category.** Find events in categories such as academic, social, sports, and career. Tracked in [issue #11](https://github.com/web103-final-project/school.Event/issues/11).
-- [ ] **Sort events by date.** Arrange events by date to plan a schedule. Tracked in [issue #11](https://github.com/web103-final-project/school.Event/issues/11).
-- [ ] **Validate event submissions.** Reject invalid dates and missing or inconsistent form values before saving. Tracked in [issue #12](https://github.com/web103-final-project/school.Event/issues/12).
+- [x] **✅ Filter events by category.** Find events in categories such as academic, social, sports, and career. Tracked in [issue #11](https://github.com/web103-final-project/school.Event/issues/11).
+
+  ![Filter by category and sort by date](docs/demos/filter-sort.gif)
+
+- [x] **✅ Sort events by date.** Arrange events by date to plan a schedule. Tracked in [issue #11](https://github.com/web103-final-project/school.Event/issues/11).
+
+  ![Filter by category and sort by date](docs/demos/filter-sort.gif)
+
+- [x] **✅ Validate event submissions.** Reject invalid dates and missing or inconsistent form values before saving. Tracked in [issue #12](https://github.com/web103-final-project/school.Event/issues/12).
+
+  ![Reject a past event time, then save a valid event](docs/demos/create-event.gif)
 - [x] **✅ View event details.** Open a dedicated sample event page with its description, date, time, location, category, and host. Direct URL reloads, missing events, and request failures are handled. RSVP controls remain planned. Tracked in [issue #4](https://github.com/web103-final-project/school.Event/issues/4).
 
   ![Open an event and return to the board](docs/demos/browse-events.gif)
@@ -52,7 +67,7 @@ The [Milestone 3 Progress Report](milestones/progress_report_3.md) records the G
 | --- | --- |
 | Frontend | React with React Router |
 | Backend | Node.js with Express |
-| Database, planned | PostgreSQL |
+| Database | PostgreSQL |
 | Deployment, planned | Render |
 
 The [database design](planning/entity_relationship_diagram.md) defines categories, events, students, and RSVPs. A category can contain many events. The RSVP join table connects students and events and stores each student's response.
@@ -71,19 +86,23 @@ The [database design](planning/entity_relationship_diagram.md) defines categorie
 | Unit 5 | [Milestone 1: project definition and user stories](milestones/milestone1.md) | Complete |
 | Unit 6 | [Milestone 2: wireframes, database design, and pitch preparation](milestones/milestone2.md) | Complete |
 | Unit 7 | [Milestone 3: project management and initial frontend/API](milestones/milestone3.md) | Complete |
-| Unit 8 | [Milestone 4: implementation progress](milestones/milestone4.md) | Planned |
+| Unit 8 | [Milestone 4: implementation progress](milestones/milestone4.md) | Complete |
 | Unit 9 | [Milestone 5: deployment and final demonstration](milestones/milestone5.md) | Planned |
 
 The [GitHub milestones](https://github.com/web103-final-project/school.Event/milestones?state=all) track the issues assigned to each unit.
 
 ## Local setup
 
-Use Node.js 22.12 or newer and npm. No database or environment file is required for this pass.
+Use Node.js 22.12 or newer, npm, and PostgreSQL. Copy the example environment file and point `DATABASE_URL` at your database. Do not commit `.env`.
 
 ```bash
 npm ci
+cp .env.example .env
+npm run db:reset
 npm run dev
 ```
+
+`.env.example` uses `postgres://school:school@127.0.0.1:5432/school_event`. Create that local role and database, or change the URL. `npm run db:reset` drops and recreates the School.Event tables, then seeds six upcoming events. It is a local command, not a public API route.
 
 Open [the frontend](http://127.0.0.1:5173). Express runs at `http://127.0.0.1:3001`; Vite forwards `/api` requests to it. Stop both processes with Ctrl+C.
 
@@ -92,27 +111,32 @@ npm test
 npm run build
 ```
 
-The tests exercise the API over HTTP. The build writes the frontend to `dist/`. To inspect the production frontend locally, run `npm run dev:server` in one terminal and `npm run preview` in another.
+The tests exercise the API over HTTP and reset the database named by `DATABASE_URL`. The build writes the frontend to `dist/`. To inspect the production frontend locally, run `npm run dev:server` in one terminal and `npm run preview` in another.
 
 ## API routes
 
 | Method | Route | Response |
 | --- | --- | --- |
 | GET | `/api/health` | API health status. |
-| GET | `/api/events` | All six sample events. |
+| GET | `/api/categories` | Category options for the board and forms. |
+| GET | `/api/events` | Events, with optional `categoryId` and `sort=date_asc` or `sort=date_desc`. |
 | GET | `/api/events/:eventId` | One event, or a JSON 404 response. |
+| POST | `/api/events` | Validate and save an event. Returns 201, or 400 with field errors. |
+| PATCH | `/api/events/:eventId` | Validate the resulting event and save changes. |
+| DELETE | `/api/events/:eventId` | Delete an event. Returns 204, or a JSON 404. |
 
-Frontend routes are `/` and `/events/:eventId`. Unknown frontend addresses show a page-not-found message. API write operations are outside this pass.
+Frontend routes are `/`, `/events/new`, `/events/:eventId`, and `/events/:eventId/edit`. Unknown frontend addresses show a page-not-found message.
 
 ## Repository layout
 
-- `client/src/pages/` contains the home and event details pages.
+- `client/src/pages/` contains the home, event details, and event form pages.
 - `client/src/components/` contains event cards, metadata, and request-state messages.
 - `client/src/api.js` loads API data and supports retry after errors.
 - `client/src/styles.css` contains the noticeboard styling and responsive layouts.
-- `server/app.js` defines the read-only API; `server/index.js` starts it.
-- `server/data/events.js` holds the sample events for replacement with database queries later.
-- `server/app.test.js` verifies list, detail, health, and missing-route behavior.
+- `server/app.js` defines the API; `server/index.js` starts it.
+- `server/schema.sql`, `server/reset.js`, and `server/events.js` own the PostgreSQL schema, seed reset, and queries.
+- `server/validate.js` checks an event before a create or update is written.
+- `server/app.test.js` verifies the API, including writes, filters, and rejected submissions.
 
 ## Image sources
 

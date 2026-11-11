@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 
 export function useApi(path) {
   const [attempt, setAttempt] = useState(0);
-  const [result, setResult] = useState({ path, status: 'loading' });
+  const [result, setResult] = useState({ path, status: path ? 'loading' : 'idle' });
 
   useEffect(() => {
+    if (!path) return undefined;
     const controller = new AbortController();
     setResult({ path, status: 'loading' });
 
@@ -26,6 +27,7 @@ export function useApi(path) {
     return () => controller.abort();
   }, [path, attempt]);
 
+  if (!path) return { status: 'idle', retry() {} };
   return {
     ...(result.path === path ? result : { status: 'loading' }),
     retry: () => setAttempt((value) => value + 1),

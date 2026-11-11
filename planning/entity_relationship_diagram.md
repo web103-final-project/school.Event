@@ -4,9 +4,7 @@ Reference the Creating an Entity Relationship Diagram final project guide in the
 
 ## Implementation status
 
-This is the planned PostgreSQL schema. The initial implementation uses `server/data/events.js` and has no database tables yet. The sample event category and host are text labels.
-
-Milestone 4 will add categories/events tables and a repeatable seed/reset command. The final milestone will add students and the RSVP join table. Clubs are outside the current schema and delivery scope. See the [development plan](development_plan.md).
+Categories and events are stored in PostgreSQL. `server/schema.sql` defines that one-to-many relationship, and `npm run db:reset` recreates the demo data. Students and the RSVP join table remain for the final milestone. Clubs are outside the current schema and delivery scope. See the [development plan](development_plan.md).
 
 ## Create the List of Tables
 

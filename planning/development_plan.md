@@ -93,7 +93,7 @@ Keep the database reset usable after schema changes. Test event creation, refres
 
 Perform an early Render deployment check this week to test the production build, database connection, environment variables, and direct frontend URLs. Final deployment verification remains part of Unit 9.
 
-Use the linked Milestone 4 issues below for persistence, creation, editing, deletion, filtering/sorting, and validation. All are planned and have board status Todo.
+The Milestone 4 issues below cover persistence, creation, editing, deletion, filtering/sorting, and validation.
 
 ## Final milestone: RSVP and delivery
 

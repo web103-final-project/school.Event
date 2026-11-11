@@ -4,10 +4,9 @@ Reference the Creating an Entity Relationship Diagram final project guide in the
 
 ## Implementation status
 
-These images are the Milestone 2 design references. The current app follows their noticeboard style with a read-only homepage and event details page using the basic Express sample API.
+These images are the Milestone 2 design references. The current app follows their noticeboard style.
 
-- `/` and `/events/:eventId` are implemented.
-- Create and edit forms, category/date controls, and deletion are planned for Milestone 4.
+- `/`, `/events/new`, `/events/:eventId`, and `/events/:eventId/edit` are implemented, including category and date controls and deletion.
 - RSVP controls are planned for the final milestone.
 - Search appears in the original reference but is deferred beyond the current delivery scope.
 
@@ -32,7 +31,7 @@ The reference shows event browsing, search, category filters, and date sorting. 
 
 ## Wireframe 2: Event Details Page
 
-This page displays information about a selected event, including its description, date, time, and location. The reference also shows RSVP, edit, and delete controls. Those actions are planned for later passes.
+This page displays information about a selected event, including its description, date, time, and location. Edit and delete are available on the page. RSVP controls remain planned for the final milestone.
 
 ![Event Details Page Wireframe](./Event%20page.png)
 
