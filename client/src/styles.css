@@ -119,6 +119,19 @@ nav a:hover, nav a[aria-current] { color: var(--ink); border-bottom-color: var(-
 .form-actions, .detail-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .detail-actions { margin-top: 28px; }
 .detail-actions + .form-error { margin-top: 12px; }
+.rsvp { margin-top: 32px; padding: 24px; background: #fffdf8cc; border: 1px solid var(--line); border-radius: 12px; }
+.rsvp h2 { font-size: 1.5rem; letter-spacing: -0.02em; }
+.rsvp-identity { margin-top: 6px; color: var(--muted); font-size: 0.85rem; line-height: 1.5; }
+.rsvp-options { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+.rsvp-option { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 12px 22px; color: var(--ink); background: transparent; border: 1px solid #c7b79d; border-radius: 25px; font-weight: 600; }
+.rsvp-option:hover:not(:disabled) { background: #fffdf6; }
+.rsvp-option.is-selected { color: #fffdf6; background: var(--ink); border-color: var(--ink); }
+.rsvp-option:disabled { cursor: default; }
+.rsvp-option:disabled:not(.is-selected) { opacity: 0.65; }
+.rsvp-status { margin-top: 12px; color: var(--muted); font-size: 0.9rem; }
+.rsvp-saved { color: #3f6b35; font-weight: 500; }
+.rsvp .form-error { margin-top: 12px; }
+.rsvp-problem .button { margin-top: 10px; }
 .loading-state { padding: 70px 24px; text-align: center; color: var(--muted); }
 .detail-loading { min-height: 65vh; }
 .empty-state { padding: 70px 24px; border: 1px dashed #c7b79d; border-radius: 8px; text-align: center; background: #fffdf665; }

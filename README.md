@@ -21,7 +21,7 @@ The idea came from Homecoming Week, when many events relied on paper posters for
 
 ## Project status
 
-The React noticeboard and Express API are backed by PostgreSQL. Students can browse, filter, and sort events, open an event, and create, edit, or delete posts. Server validation rejects incomplete or inconsistent submissions. RSVP and the deployed walkthrough remain for the final milestone.
+The React noticeboard and Express API are backed by PostgreSQL. Students can browse, filter, and sort events, open an event, and create, edit, or delete posts. Server validation rejects incomplete or inconsistent submissions. RSVP controls are implemented on the event page (issue #5) and are awaiting database migration and team verification. The deployed walkthrough remains for the final milestone.
 
 Work is tracked on the [WEB103-Final-Project board](https://github.com/orgs/web103-final-project/projects/1). The board is private, and the grading account **codepathreview** has Reader access.
 
@@ -45,7 +45,7 @@ The [Milestone 3 Progress Report](milestones/progress_report_3.md) records the G
 
   ![Remove an event and return to the board](docs/demos/delete-event.gif)
 
-- [ ] **RSVP to events.** Select "Going" or "Interested" without leaving the event page. Tracked in [issue #5](https://github.com/web103-final-project/school.Event/issues/5).
+- [ ] **RSVP to events.** Select "Going" or "Interested" without leaving the event page. The choice is saved in PostgreSQL and restored after a refresh. Implemented and awaiting verification; see [RSVP](#rsvp). Tracked in [issue #5](https://github.com/web103-final-project/school.Event/issues/5).
 - [x] **✅ Filter events by category.** Find events in categories such as academic, social, sports, and career. Tracked in [issue #11](https://github.com/web103-final-project/school.Event/issues/11).
 
   ![Filter by category and sort by date](docs/demos/filter-sort.gif)
@@ -102,7 +102,7 @@ npm run db:reset
 npm run dev
 ```
 
-`.env.example` uses `postgres://school:school@127.0.0.1:5432/school_event`. Create that local role and database, or change the URL. `npm run db:reset` drops and recreates the School.Event tables, then seeds six upcoming events. It is a local command, not a public API route.
+`.env.example` uses `postgres://school:school@127.0.0.1:5432/school_event`. Create that local role and database, or change the URL. `npm run db:reset` drops and recreates the School.Event tables, then seeds six upcoming events and the RSVP demo student. It is a local command, not a public API route.
 
 Open [the frontend](http://127.0.0.1:5173). Express runs at `http://127.0.0.1:3001`; Vite forwards `/api` requests to it. Stop both processes with Ctrl+C.
 
@@ -123,20 +123,73 @@ The tests exercise the API over HTTP and reset the database named by `DATABASE_U
 | GET | `/api/events/:eventId` | One event, or a JSON 404 response. |
 | POST | `/api/events` | Validate and save an event. Returns 201, or 400 with field errors. |
 | PATCH | `/api/events/:eventId` | Validate the resulting event and save changes. |
-| DELETE | `/api/events/:eventId` | Delete an event. Returns 204, or a JSON 404. |
+| DELETE | `/api/events/:eventId` | Delete an event and its RSVPs. Returns 204, or a JSON 404. |
+| GET | `/api/students/demo` | The demo student used for RSVP, or a JSON 404 if it hasn't been seeded. |
+| GET | `/api/events/:eventId/rsvp?student_id=:id` | The student's RSVP for the event, or `{ "rsvp": null }`. |
+| POST | `/api/events/:eventId/rsvp` | Save or change the student's RSVP. Returns 201 when created and 200 when updated. |
 
 Frontend routes are `/`, `/events/new`, `/events/:eventId`, and `/events/:eventId/edit`. Unknown frontend addresses show a page-not-found message.
+
+## RSVP
+
+On an event's page, a student chooses **Going** or **Interested** without leaving the page. The choice is stored in PostgreSQL and shown again after a refresh. Choosing the other option changes the existing RSVP. It does not add a second one.
+
+### Database
+
+| Table | Columns | Constraints |
+| --- | --- | --- |
+| `students` | `id`, `name`, `email` | `email` is unique. |
+| `rsvps` | `id`, `student_id`, `event_id`, `status` | `status` must be `Going` or `Interested` (`rsvps_status_valid`). One row per student and event (`rsvps_student_event_unique`). Deleting an event or student deletes its RSVPs. |
+
+Fresh installs get both tables from `server/schema.sql` through `npm run db:reset`. An **existing** database, such as the one on Render, needs the additive migration instead, so its events are kept:
+
+```bash
+psql "$DATABASE_URL" -f server/migrations/001_add_students_and_rsvps.sql
+```
+
+The migration only creates missing tables and inserts the demo student if that email isn't already present. It doesn't drop or change categories or events, and it is safe to run more than once. You can also paste it into any SQL client connected to the database. RSVP needs no new environment variables; the API still uses only `DATABASE_URL` (and optionally `PORT`).
+
+### Student identification (demo only)
+
+School.Event has no sign-in. Every visitor RSVPs as one shared **Demo Student** (`demo.student@school.event`), seeded by the migration and by `db:reset`. The server finds this student by email, so no student id is hardcoded. This is **not authentication**: anyone can RSVP as the demo student, and the API trusts the `student_id` it receives. Replace it with real sign-in before using RSVP for real students.
+
+### API
+
+`GET /api/students/demo` returns `{ "id": 1, "name": "Demo Student", "email": "demo.student@school.event" }`. The id depends on the database.
+
+`GET /api/events/:eventId/rsvp?student_id=1` returns:
+
+```json
+{ "rsvp": { "id": 7, "studentId": 1, "eventId": 3, "status": "Going" } }
+```
+
+or `{ "rsvp": null }` when the student hasn't responded.
+
+`POST /api/events/:eventId/rsvp` with body `{ "student_id": 1, "status": "Interested" }` returns `{ "rsvp": { … } }`. It uses `INSERT … ON CONFLICT (student_id, event_id) DO UPDATE`, so a changed answer updates the same row.
+
+| Status | When |
+| --- | --- |
+| 400 | Missing or invalid `student_id`, a missing status, or a status other than `Going`/`Interested`. The status is case-sensitive. |
+| 404 | The event or student doesn't exist, or the event id is malformed (matching the other event routes). |
+| 500 | Database or unexpected error. Returns a generic JSON message. |
+
+All errors are JSON objects with an `error` message.
+
+### Frontend
+
+`client/src/components/RsvpControls.jsx` appears on `/events/:eventId` below the description. It loads the demo student, then that student's saved RSVP, and shows "Checking your RSVP…" until both arrive. Clicking an option sends a `POST`, disables both buttons and shows "Saving…" while waiting, and marks the option as selected only after the server confirms the save. If saving fails, the previous confirmed choice stays selected and an error explains that the RSVP wasn't saved; clicking again retries. Load failures show a message with a **Try again** button.
 
 ## Repository layout
 
 - `client/src/pages/` contains the home, event details, and event form pages.
-- `client/src/components/` contains event cards, metadata, and request-state messages.
+- `client/src/components/` contains event cards, metadata, RSVP controls, and request-state messages.
 - `client/src/api.js` loads API data and supports retry after errors.
 - `client/src/styles.css` contains the noticeboard styling and responsive layouts.
 - `server/app.js` defines the API; `server/index.js` starts it.
 - `server/schema.sql`, `server/reset.js`, and `server/events.js` own the PostgreSQL schema, seed reset, and queries.
+- `server/students.js` holds the demo student and RSVP queries; `server/migrations/` holds additive SQL for existing databases.
 - `server/validate.js` checks an event before a create or update is written.
-- `server/app.test.js` verifies the API, including writes, filters, and rejected submissions.
+- `server/app.test.js` verifies the API, including writes, filters, RSVPs, and rejected submissions.
 
 ## Image sources
 

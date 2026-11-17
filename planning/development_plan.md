@@ -21,7 +21,7 @@ Use the four entities in the existing [database design](entity_relationship_diag
 | Student | ID, name, unique email | Final milestone |
 | RSVP | Event ID, student ID, status | Final milestone |
 
-An event belongs to one category. RSVP connects students to events, with one row per event/student pair. RSVP status is either `going` or `interested`.
+An event belongs to one category. RSVP connects students to events, with one row per event/student pair. RSVP status is either `Going` or `Interested`, enforced by a database `CHECK` constraint.
 
 Store event times as PostgreSQL timestamps with time zones. Return ISO timestamps from the API and format them for display in the browser. Seed upcoming events relative to the reset date so demonstrations do not depend on expired dates.
 
@@ -101,10 +101,11 @@ Add the students and RSVPs tables, seeded demo students, and the event/student u
 
 | Backend route | Behavior |
 | --- | --- |
-| `GET /api/events/:eventId/rsvp` | Return the demo student's saved selection, or no selection. |
-| `PUT /api/events/:eventId/rsvp` | Insert or update the demo student's `going` or `interested` selection without duplicate rows. |
+| `GET /api/students/demo` | Return the seeded demo student, looked up by email. |
+| `GET /api/events/:eventId/rsvp?student_id=` | Return the student's saved selection, or `{ "rsvp": null }`. |
+| `POST /api/events/:eventId/rsvp` | Insert or update the student's `Going` or `Interested` selection without duplicate rows. |
 
-The server chooses the configured demo student. The UI identifies that student and makes no authentication claim. The initial RSVP feature supports changing between the two statuses; removing an RSVP is optional later work.
+The server identifies the seeded demo student by email, and the client sends that student's id. The UI identifies that student and makes no authentication claim. The initial RSVP feature supports changing between the two statuses; removing an RSVP is optional later work.
 
 Add Going and Interested controls to event details. Persist the selection without page navigation and restore it after refresh. Show a clear error when saving fails.
 

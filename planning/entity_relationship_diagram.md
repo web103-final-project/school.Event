@@ -4,7 +4,7 @@ Reference the Creating an Entity Relationship Diagram final project guide in the
 
 ## Implementation status
 
-Categories and events are stored in PostgreSQL. `server/schema.sql` defines that one-to-many relationship, and `npm run db:reset` recreates the demo data. Students and the RSVP join table remain for the final milestone. Clubs are outside the current schema and delivery scope. See the [development plan](development_plan.md).
+Categories and events are stored in PostgreSQL. `server/schema.sql` defines that one-to-many relationship, and `npm run db:reset` recreates the demo data. The `students` table and the `rsvps` join table (issue #5) are also defined there. Existing databases get them from `server/migrations/001_add_students_and_rsvps.sql`. Each RSVP has a status of `Going` or `Interested`, and each student can have one RSVP per event. Clubs are outside the current schema and delivery scope. See the [development plan](development_plan.md).
 
 ## Create the List of Tables
 
