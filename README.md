@@ -2,6 +2,12 @@
 
 A campus event discovery and management app for the CodePath WEB103 final project.
 
+## Live Demo
+
+School.Event is deployed on Render.
+
+[Visit School.Event](https://school-event-kgni.onrender.com/)
+
 ## About
 
 School.Event will give students and organizers one place to find and manage campus events. Students will be able to browse upcoming events, view details, and RSVP as "Going" or "Interested." Organizers will be able to create, update, and remove event posts.
@@ -45,7 +51,7 @@ The [Milestone 3 Progress Report](milestones/progress_report_3.md) records the G
 
   ![Remove an event and return to the board](docs/demos/delete-event.gif)
 
-- [ ] **RSVP to events.** Select "Going" or "Interested" without leaving the event page. The choice is saved in PostgreSQL and restored after a refresh. Implemented and awaiting verification; see [RSVP](#rsvp). Tracked in [issue #5](https://github.com/web103-final-project/school.Event/issues/5).
+- [x] **RSVP to events.** Select "Going" or "Interested" without leaving the event page. The choice is saved in PostgreSQL and restored after a refresh. Implemented and awaiting verification; see [RSVP](#rsvp). Tracked in [issue #5](https://github.com/web103-final-project/school.Event/issues/5).
 - [x] **✅ Filter events by category.** Find events in categories such as academic, social, sports, and career. Tracked in [issue #11](https://github.com/web103-final-project/school.Event/issues/11).
 
   ![Filter by category and sort by date](docs/demos/filter-sort.gif)
