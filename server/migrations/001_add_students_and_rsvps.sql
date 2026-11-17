@@ -7,8 +7,8 @@
 -- Apply once to an existing database, for example:
 --   psql "$DATABASE_URL" -f server/migrations/001_add_students_and_rsvps.sql
 --
--- The table definitions match server/schema.sql, which fresh installs use
--- through `npm run db:reset`.
+-- The table definitions match server/schema.sql. `npm run db:init` applies the
+-- same changes non-destructively, so a database it has set up needs no migration.
 
 BEGIN;
 

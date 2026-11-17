@@ -111,7 +111,73 @@ npm test
 npm run build
 ```
 
-The tests exercise the API over HTTP and reset the database named by `DATABASE_URL`. The build writes the frontend to `dist/`. To inspect the production frontend locally, run `npm run dev:server` in one terminal and `npm run preview` in another.
+The tests exercise the API over HTTP and reset the database named by `DATABASE_URL`. The build writes the frontend to `dist/`. To run the production setup locally, run `npm run build` and then `npm start`. Express then serves the built frontend and the API together at `http://127.0.0.1:3001`.
+
+## Deploying to Render
+
+School.Event runs on Render as **one web service**, which serves both the Express API and the built React app, plus **one PostgreSQL database**. In production, Express serves `dist/` and sends `index.html` for frontend routes such as `/events/3`, so refreshing a deep link works. Every `/api/...` request, including unknown API routes, gets a JSON response, never the React page. The frontend calls relative `/api/...` URLs, so it needs no API address setting.
+
+### 1. Create the database
+
+1. In the Render dashboard, choose **New → Postgres**.
+2. Pick a name, the region you will also use for the web service, and a plan.
+3. When it is available, open the database and copy the **Internal Database URL**. The web service uses it.
+
+### 2. Create the web service
+
+Choose **New → Web Service**, connect the GitHub repository, and use these settings:
+
+| Setting | Value |
+| --- | --- |
+| Branch | `main` |
+| Root directory | *(leave blank: the repository root)* |
+| Runtime | Node |
+| Build command | `npm ci --include=dev && npm run build` |
+| Start command | `npm run db:init && npm start` |
+| Health check path | `/api/health` |
+
+`--include=dev` keeps Vite installed for the build even when `NODE_ENV=production` is set.
+
+### 3. Environment variables
+
+| Variable | Value |
+| --- | --- |
+| `DATABASE_URL` | The database's **Internal Database URL**. Required. |
+| `NODE_ENV` | `production`. Recommended. |
+| `NODE_VERSION` | `22.12.0` or a newer 22.x/24.x release. Optional; `package.json` already requires Node ≥ 22.12. |
+
+Don't set `PORT`: Render provides it, and the server binds to `0.0.0.0` on Render automatically. Never commit the database URL. Add it only in Render's **Environment** settings.
+
+### 4. Database initialization
+
+`npm run db:init` runs before the server on every start. It is safe to repeat:
+
+- It creates any missing tables (`categories`, `events`, `students`, `rsvps`) with their foreign keys, `CHECK` constraints, and the one-RSVP-per-student-per-event constraint.
+- It adds any missing categories and the RSVP demo student.
+- It seeds the six sample events **only on a brand-new database**, when the `events` table doesn't exist yet. Later starts never re-add sample events, even if all events were deleted.
+- It never drops, truncates, or updates existing rows. If the database can't be reached, the start fails with an error in the deploy logs instead of serving fake data.
+
+**Never run `npm run db:reset` against the Render database.** It deletes all events and RSVPs.
+
+To run `db:init` from your own computer instead, put the database's **External Database URL** in your local `.env` as `DATABASE_URL`, then run `npm run db:init`. Render requires SSL for external connections. If the connection is refused over SSL, append `?sslmode=no-verify` to that local URL.
+
+### 5. Verify the deployment
+
+Replace `https://your-app.onrender.com` with the service's URL.
+
+1. **Health:** `https://your-app.onrender.com/api/health` returns `{"status":"ok"}`. This only shows that Express is running; the next step checks the database.
+2. **Events from PostgreSQL:** `/api/events` returns the six sample events, and the home page shows them with photos.
+3. **Routing:** open an event, refresh the page, and confirm it still loads. `/api/missing` should return the JSON error `{"error":"API route not found."}`.
+4. **CRUD:** post an event, edit it, refresh to confirm the change persisted, then remove it.
+5. **RSVP:** on an event page, choose **Going**, refresh, and confirm it's still selected. Switch to **Interested** and refresh again. `/api/students/demo` should return the demo student.
+
+### Free plan limitations
+
+These were Render's free-plan limits at the time of writing. Check Render's pricing page for current terms.
+
+- Free web services spin down after about 15 minutes without traffic. The next visit can take up to about a minute while the service, including `db:init`, starts again.
+- Free PostgreSQL databases expire 30 days after creation unless upgraded, have limited storage, and have no backups. Recreating one gives a new URL to update in `DATABASE_URL`; the next start then seeds fresh sample data.
+- Free services have no shell or pre-deploy command, which is why initialization runs in the start command.
 
 ## API routes
 
@@ -141,7 +207,7 @@ On an event's page, a student chooses **Going** or **Interested** without leavin
 | `students` | `id`, `name`, `email` | `email` is unique. |
 | `rsvps` | `id`, `student_id`, `event_id`, `status` | `status` must be `Going` or `Interested` (`rsvps_status_valid`). One row per student and event (`rsvps_student_event_unique`). Deleting an event or student deletes its RSVPs. |
 
-Fresh installs get both tables from `server/schema.sql` through `npm run db:reset`. An **existing** database, such as the one on Render, needs the additive migration instead, so its events are kept:
+Fresh installs get both tables from `server/schema.sql`, through `npm run db:init` (safe, used on Render) or `npm run db:reset` (local only). `db:init` also adds them to an older database that predates RSVP. To apply only the RSVP tables to such a database by hand, use the additive migration:
 
 ```bash
 psql "$DATABASE_URL" -f server/migrations/001_add_students_and_rsvps.sql
@@ -151,7 +217,7 @@ The migration only creates missing tables and inserts the demo student if that e
 
 ### Student identification (demo only)
 
-School.Event has no sign-in. Every visitor RSVPs as one shared **Demo Student** (`demo.student@school.event`), seeded by the migration and by `db:reset`. The server finds this student by email, so no student id is hardcoded. This is **not authentication**: anyone can RSVP as the demo student, and the API trusts the `student_id` it receives. Replace it with real sign-in before using RSVP for real students.
+School.Event has no sign-in. Every visitor RSVPs as one shared **Demo Student** (`demo.student@school.event`), seeded by `db:init`, `db:reset`, and the migration. The server finds this student by email, so no student id is hardcoded. This is **not authentication**: anyone can RSVP as the demo student, and the API trusts the `student_id` it receives. Replace it with real sign-in before using RSVP for real students.
 
 ### API
 
@@ -185,8 +251,9 @@ All errors are JSON objects with an `error` message.
 - `client/src/components/` contains event cards, metadata, RSVP controls, and request-state messages.
 - `client/src/api.js` loads API data and supports retry after errors.
 - `client/src/styles.css` contains the noticeboard styling and responsive layouts.
-- `server/app.js` defines the API; `server/index.js` starts it.
+- `server/app.js` defines the API and, after a build, serves `dist/`; `server/index.js` starts it.
 - `server/schema.sql`, `server/reset.js`, and `server/events.js` own the PostgreSQL schema, seed reset, and queries.
+- `server/init.js` safely creates missing tables and first-time seed data (`npm run db:init`); `server/seed.js` holds the seed data shared with `server/reset.js`.
 - `server/students.js` holds the demo student and RSVP queries; `server/migrations/` holds additive SQL for existing databases.
 - `server/validate.js` checks an event before a create or update is written.
 - `server/app.test.js` verifies the API, including writes, filters, RSVPs, and rejected submissions.
