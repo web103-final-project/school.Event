@@ -4,6 +4,7 @@ import { ArrowLeft, Sparkle } from 'lucide-react';
 import { useApi } from '../api.js';
 import EventMeta, { categoryNames } from '../components/EventMeta.jsx';
 import PageState from '../components/PageState.jsx';
+import RsvpControls from '../components/RsvpControls.jsx';
 
 export default function EventDetails() {
   const { eventId } = useParams();
@@ -48,6 +49,7 @@ export default function EventDetails() {
           <h1>{event.title}</h1>
           <EventMeta event={event} detailed />
           <div className="detail-description"><h2>What's happening</h2><p>{event.description}</p></div>
+          <RsvpControls key={event.id} eventId={event.id} />
           <div className="detail-actions">
             <Link className="button" to={`/events/${event.id}/edit`}>Edit event</Link>
             <button className="button button-quiet" type="button" onClick={remove} disabled={removing}>{removing ? 'Removing…' : 'Remove event'}</button>
