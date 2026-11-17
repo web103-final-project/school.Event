@@ -1,7 +1,10 @@
 import { app } from './app.js';
 
-const port = process.env.PORT ?? 3001;
+const port = Number(process.env.PORT) || 3001;
+// Render (and other hosts) route traffic to 0.0.0.0; locally, stay on loopback.
+const production = process.env.NODE_ENV === 'production' || process.env.RENDER === 'true';
+const host = process.env.HOST ?? (production ? '0.0.0.0' : '127.0.0.1');
 
-app.listen(port, '127.0.0.1', () => {
-  console.log(`School.Event API listening on http://127.0.0.1:${port}`);
+app.listen(port, host, () => {
+  console.log(`School.Event listening on http://${host}:${port}`);
 });

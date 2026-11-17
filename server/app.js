@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { deleteEvent, findEvent, insertEvent, listCategories, listEvents, updateEvent } from './events.js';
 import { RSVP_STATUSES, findDemoStudent, findRsvp, saveRsvp, studentExists } from './students.js';
@@ -135,6 +137,20 @@ app.post('/api/events/:eventId/rsvp', async (req, res) => {
 app.use('/api', (req, res) => {
   res.status(404).json({ error: 'API route not found.' });
 });
+
+// Production frontend: serve the Vite build from dist/ (created by `npm run build`).
+// This comes after every API route and the API 404 handler, so /api requests never get HTML.
+const distDir = fileURLToPath(new URL('../dist/', import.meta.url));
+const indexHtml = `${distDir}index.html`;
+if (existsSync(indexHtml)) {
+  app.use(express.static(distDir));
+  // React Router deep links (e.g. /events/3/edit) load index.html on refresh.
+  // Missing files such as /images/nope.jpg still return a plain 404.
+  app.use((req, res, next) => {
+    if ((req.method !== 'GET' && req.method !== 'HEAD') || /\.[^/]+$/.test(req.path)) return next();
+    res.sendFile(indexHtml);
+  });
+}
 
 app.use((error, req, res, next) => {
   if (error instanceof URIError && req.path.startsWith('/api/events/')) {

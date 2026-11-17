@@ -1,10 +1,10 @@
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   slug text NOT NULL UNIQUE,
   name text NOT NULL UNIQUE
 );
 
-CREATE TABLE events (
+CREATE TABLE IF NOT EXISTS events (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   category_id integer NOT NULL REFERENCES categories (id),
   title text NOT NULL,
@@ -17,13 +17,13 @@ CREATE TABLE events (
   CONSTRAINT events_end_after_start CHECK (ends_at > starts_at)
 );
 
-CREATE TABLE students (
+CREATE TABLE IF NOT EXISTS students (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   name text NOT NULL,
   email text NOT NULL UNIQUE
 );
 
-CREATE TABLE rsvps (
+CREATE TABLE IF NOT EXISTS rsvps (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   student_id integer NOT NULL REFERENCES students (id) ON DELETE CASCADE,
   event_id integer NOT NULL REFERENCES events (id) ON DELETE CASCADE,
