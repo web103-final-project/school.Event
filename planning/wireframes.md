@@ -31,7 +31,7 @@ The reference shows event browsing, search, category filters, and date sorting. 
 
 ## Wireframe 2: Event Details Page
 
-This page displays information about a selected event, including its description, date, time, and location. Edit and delete are available on the page. RSVP controls remain planned for the final milestone.
+This page displays information about a selected event, including its description, date, time, and location. The built page also has edit, delete, and Going or Interested controls.
 
 ![Event Details Page Wireframe](./Event%20page.png)
 

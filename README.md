@@ -27,7 +27,7 @@ The idea came from Homecoming Week, when many events relied on paper posters for
 
 ## Project status
 
-The React noticeboard and Express API are backed by PostgreSQL. Students can browse, filter, and sort events, open an event, and create, edit, or delete posts. Server validation rejects incomplete or inconsistent submissions. RSVP controls are implemented on the event page (issue #5) and are awaiting database migration and team verification. The deployed walkthrough remains for the final milestone.
+The React noticeboard and Express API are backed by PostgreSQL and deployed on Render. Students can browse, filter, and sort events, open an event, and create, edit, or delete posts. Server validation rejects incomplete or inconsistent submissions. RSVP controls on the event page save Going or Interested in PostgreSQL and restore that choice after a refresh. The deployed walkthrough is in the [Milestone 5 document](milestones/milestone5.md).
 
 Work is tracked on the [WEB103-Final-Project board](https://github.com/orgs/web103-final-project/projects/1). The board is private, and the grading account **codepathreview** has Reader access.
 
@@ -51,7 +51,9 @@ The [Milestone 3 Progress Report](milestones/progress_report_3.md) records the G
 
   ![Remove an event and return to the board](docs/demos/delete-event.gif)
 
-- [x] **RSVP to events.** Select "Going" or "Interested" without leaving the event page. The choice is saved in PostgreSQL and restored after a refresh. Implemented and awaiting verification; see [RSVP](#rsvp). Tracked in [issue #5](https://github.com/web103-final-project/school.Event/issues/5).
+- [x] **✅ RSVP to events.** Select "Going" or "Interested" without leaving the event page. The choice is saved in PostgreSQL and restored after a refresh. See [RSVP](#rsvp). Tracked in [issue #5](https://github.com/web103-final-project/school.Event/issues/5).
+
+  ![Choose Going or Interested and keep it after refresh](docs/demos/rsvp.gif)
 - [x] **✅ Filter events by category.** Find events in categories such as academic, social, sports, and career. Tracked in [issue #11](https://github.com/web103-final-project/school.Event/issues/11).
 
   ![Filter by category and sort by date](docs/demos/filter-sort.gif)
@@ -63,7 +65,7 @@ The [Milestone 3 Progress Report](milestones/progress_report_3.md) records the G
 - [x] **✅ Validate event submissions.** Reject invalid dates and missing or inconsistent form values before saving. Tracked in [issue #12](https://github.com/web103-final-project/school.Event/issues/12).
 
   ![Reject a past event time, then save a valid event](docs/demos/create-event.gif)
-- [x] **✅ View event details.** Open a dedicated sample event page with its description, date, time, location, category, and host. Direct URL reloads, missing events, and request failures are handled. RSVP controls remain planned. Tracked in [issue #4](https://github.com/web103-final-project/school.Event/issues/4).
+- [x] **✅ View event details.** Open a dedicated event page with its description, date, time, location, category, host, and RSVP controls. Direct URL reloads, missing events, and request failures are handled. Tracked in [issue #4](https://github.com/web103-final-project/school.Event/issues/4).
 
   ![Open an event and return to the board](docs/demos/browse-events.gif)
 
@@ -74,7 +76,7 @@ The [Milestone 3 Progress Report](milestones/progress_report_3.md) records the G
 | Frontend | React with React Router |
 | Backend | Node.js with Express |
 | Database | PostgreSQL |
-| Deployment, planned | Render |
+| Deployment | Render |
 
 The [database design](planning/entity_relationship_diagram.md) defines categories, events, students, and RSVPs. A category can contain many events. The RSVP join table connects students and events and stores each student's response.
 
@@ -93,7 +95,7 @@ The [database design](planning/entity_relationship_diagram.md) defines categorie
 | Unit 6 | [Milestone 2: wireframes, database design, and pitch preparation](milestones/milestone2.md) | Complete |
 | Unit 7 | [Milestone 3: project management and initial frontend/API](milestones/milestone3.md) | Complete |
 | Unit 8 | [Milestone 4: implementation progress](milestones/milestone4.md) | Complete |
-| Unit 9 | [Milestone 5: deployment and final demonstration](milestones/milestone5.md) | Planned |
+| Unit 9 | [Milestone 5: deployment and final demonstration](milestones/milestone5.md) | Complete |
 
 The [GitHub milestones](https://github.com/web103-final-project/school.Event/milestones?state=all) track the issues assigned to each unit.
 

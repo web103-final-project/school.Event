@@ -1,6 +1,8 @@
 # Development plan
 
-The confirmed initial scope is a React frontend and a basic read-only Express backend using sample data. PostgreSQL and write operations enter scope in the next pass. Later milestone sections remain plans.
+Milestones 3, 4, and the final implementation are in this repository. PostgreSQL, event management, RSVP, and the Render deployment are in place. Submission evidence is in [milestones/milestone5.md](../milestones/milestone5.md).
+
+The sections below are the original delivery plan. The confirmed initial scope was a React frontend and a basic read-only Express backend using sample data. PostgreSQL and write operations followed in Milestone 4. RSVP and deployment followed in Unit 9.
 
 ## Delivery approach
 
